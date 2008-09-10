@@ -169,7 +169,7 @@ static VALUE tarruby_close(VALUE self) {
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
   if(tar_close(p_tar->tar) != 0) {
-    rb_raise(Error, "Close archive failed");
+    rb_raise(Error, "Close archive failed: %s", strerror(errno));
   }
 
   return Qnil;
@@ -192,7 +192,7 @@ static VALUE tarruby_s_open0(int argc, VALUE *argv, VALUE self, tartype_t *tarty
   Data_Get_Struct(tar, struct tarruby_tar, p_tar);
 
   if (tar_open(&p_tar->tar, s_pathname, tartype, i_oflags, i_mode, i_options) == -1) {
-    rb_raise(Error, "Open archive failed");
+    rb_raise(Error, "Open archive failed: %s", strerror(errno));
   }
 
   if (rb_block_given_p()) {
@@ -249,7 +249,7 @@ static VALUE tarruby_append_file(int argc, VALUE *argv, VALUE self) {
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
   if (tar_append_file(p_tar->tar, s_realname, s_savename) != 0) {
-    rb_raise(Error, "Append file failed");
+    rb_raise(Error, "Append file failed: %s", strerror(errno));
   }
 
   return Qnil;
@@ -273,7 +273,7 @@ static VALUE tarruby_append_tree(int argc, VALUE *argv, VALUE self) {
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
   if (tar_append_tree(p_tar->tar, s_realdir, s_savedir) != 0) {
-    rb_raise(Error, "Append tree failed");
+    rb_raise(Error, "Append tree failed: %s", strerror(errno));
   }
 
   return Qnil;
@@ -289,7 +289,7 @@ static VALUE tarruby_extract_file(VALUE self, VALUE realname) {
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
   if (tar_extract_file(p_tar->tar, s_realname) != 0) {
-    rb_raise(Error, "Extract file failed");
+    rb_raise(Error, "Extract file failed: %s", strerror(errno));
   }
 
   p_tar->extracted = 1;
@@ -313,7 +313,7 @@ static VALUE tarruby_extract_buffer(VALUE self) {
   buffer = rb_str_new("", 0);
 
   if ((i = tar_extract_function(p_tar->tar, (void *) buffer,  tarruby_extract_buffer0)) == -1) {
-    rb_raise(Error, "Extract buffer failed");
+    rb_raise(Error, "Extract buffer failed: %s", strerror(errno));
   }
 
   p_tar->extracted = 1;
@@ -339,7 +339,7 @@ static VALUE tarruby_extract_glob(int argc, VALUE *argv, VALUE self) {
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
   if (tar_extract_glob(p_tar->tar, s_globname, s_prefix) != 0) {
-    rb_raise(Error, "Extract archive failed");
+    rb_raise(Error, "Extract archive failed: %s", strerror(errno));
   }
 
   p_tar->extracted = 1;
@@ -363,7 +363,7 @@ static VALUE tarruby_extract_all(int argc, VALUE *argv, VALUE self) {
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
   if (tar_extract_all(p_tar->tar, s_prefix) != 0) {
-    rb_raise(Error, "Extract archive failed");
+    rb_raise(Error, "Extract archive failed: %s", strerror(errno));
   }
 
   p_tar->extracted = 1;
@@ -374,7 +374,7 @@ static VALUE tarruby_extract_all(int argc, VALUE *argv, VALUE self) {
 static void tarruby_skip_regfile_if_not_extracted(struct tarruby_tar *p) {
   if (!p->extracted) {
     if (TH_ISREG(p->tar) && tar_skip_regfile(p->tar) != 0) {
-      rb_raise(Error, "Read archive failed");
+      rb_raise(Error, "Read archive failed: %s", strerror(errno));
     }
 
     p->extracted = 1;
@@ -390,7 +390,7 @@ static VALUE tarruby_read(VALUE self) {
   tarruby_skip_regfile_if_not_extracted(p_tar);
 
   if ((i = th_read(p_tar->tar)) == -1) {
-    rb_raise(Error, "Read archive failed");
+    rb_raise(Error, "Read archive failed: %s", strerror(errno));
   }
 
   p_tar->extracted = 0;
@@ -413,7 +413,7 @@ static VALUE tarruby_each(VALUE self) {
   }
 
   if (i == -1) {
-    rb_raise(Error, "Read archive failed");
+    rb_raise(Error, "Read archive failed: %s", strerror(errno));
   }
 
   return Qnil;
