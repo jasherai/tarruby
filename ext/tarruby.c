@@ -32,7 +32,7 @@
 
 #define INT2TIME(i) rb_funcall(rb_cTime, rb_intern("at"), 1, INT2NUM(i))
 
-#define VERSION "0.1.0"
+#define VERSION "0.1.1"
 
 static VALUE Tar;
 static VALUE Error;
