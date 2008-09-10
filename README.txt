@@ -8,6 +8,61 @@ Ruby bindings for libtar.
 
 libtar is a C library for manipulating POSIX tar files.
 
+== Project Page
+
+http://rubyforge.org/projects/tarruby
+
+== Install
+
+gem install tarruby
+
+== Example
+=== reading tar archive
+
+    require 'tarruby'
+    
+    Tar.open('foo.tar', File::RDONLY) do |tar|
+      while tar.read # or 'tar.each do ...'
+        puts tar.pathname
+        tar.print_long_ls
+        
+        if tar.reg? # regular file
+          tar.extract_file('bar.txt')
+          
+          ##if extract buffer
+          #puts tar.extract_buffer
+        end
+      end
+      
+      ##if extract all files
+      #tar.extract_all
+    end
+    
+    ##for gzip archive
+    #Tar.gzopen('foo.tar.gz', ...
+    
+    ##for bzip2 archive
+    #Tar.bzopen('foo.tar.bz2', ...
+
+=== creating tar archive
+
+    require 'tarruby'
+    
+    Tar.open('bar.tar', File::CREAT | File::WRONLY) do |tar|
+      Dir.glob('**/*.c').each do |filename|
+        tar.append_file(filename)
+      end
+      
+      ##if append directory
+      #tar.append_tree('dirname')
+    end
+    
+    ##for gzip archive
+    #Tar.gzopen('foo.tar.gz', ...
+    
+    ##for bzip2 archive
+    #Tar.bzopen('foo.tar.bz2', ...
+
 == License
     Copyright (c) 2008 SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
     All rights reserved.
@@ -40,3 +95,5 @@ TAR/Ruby contains libtar.
 
 * libtar is a C library for manipulating POSIX tar files.
 * http://www.feep.net/libtar/
+* patches
+  * https://lists.feep.net:8080/pipermail/libtar/2007-July/000240.html
