@@ -163,16 +163,21 @@ static VALUE tarruby_tar_alloc(VALUE klass) {
 }
 
 /* */
-static VALUE tarruby_close(VALUE self) {
+static VALUE tarruby_close0(VALUE self, int abort) {
   struct tarruby_tar *p_tar;
 
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
-  if(tar_close(p_tar->tar) != 0) {
+  if(tar_close(p_tar->tar) != 0 && abort) {
     rb_raise(Error, "Close archive failed: %s", strerror(errno));
   }
 
   return Qnil;
+}
+
+/* */
+static VALUE tarruby_close(VALUE self) {
+  return tarruby_close0(self, 1);
 }
 
 static VALUE tarruby_s_open0(int argc, VALUE *argv, VALUE self, tartype_t *tartype) {
@@ -200,7 +205,7 @@ static VALUE tarruby_s_open0(int argc, VALUE *argv, VALUE self, tartype_t *tarty
     int status;
 
     retval = rb_protect(rb_yield, tar, &status);
-    tarruby_close(tar);
+    tarruby_close0(tar, 0);
 
     if (status != 0) {
       rb_jump_tag(status);
