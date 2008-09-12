@@ -24,6 +24,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "ruby.h"
+
 #define O_ACCMODE (O_RDONLY | O_WRONLY | O_RDWR)
 
 #define S_ISREG(m)  (((m) & (_S_IFMT)) == (_S_IFREG))
@@ -38,9 +40,7 @@
 #define geteuid()              (0)
 #define lstat(p, b)            stat((p), (b))
 #define makedev(maj, min)      (0)
-#define mkdir(d, m)            _mkdir(d)
 #define mkfifo(p, m)           (0)
 #define mknod(p, m, d)         (0)
-#define snprintf(s, n, f, ...) do { _snprintf((s), (n), (f), __VA_ARGS__); (s)[(n) - 1] = '\0'; } while(0)
 
 #endif

@@ -6,6 +6,8 @@
 #include <errno.h>
 #include "dirent.h"
 
+#include "ruby.h"
+
 #define S_ISDIR(m) (((m) & (_S_IFMT)) == (_S_IFDIR))
 
 DIR *opendir0(const char *name, int *errorp) {
