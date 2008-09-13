@@ -258,7 +258,11 @@ tar_extract_regfile(TAR *t, char *realname)
 		}
 
 		/* write block to output file */
+#ifndef _WIN32
 		if (write(fdout, buf,
+#else
+		if (_write(fdout, buf,
+#endif
 			  ((i > T_BLOCKSIZE) ? T_BLOCKSIZE : i)) == -1){
 			if (!realname) free(filename);
 			return -1;

@@ -243,7 +243,11 @@ tar_append_regfile(TAR *t, char *realname)
 	size = th_get_size(t);
 	for (i = size; i > T_BLOCKSIZE; i -= T_BLOCKSIZE)
 	{
+#ifndef _WIN32
 		j = read(filefd, &block, T_BLOCKSIZE);
+#else
+		j = _read(filefd, &block, T_BLOCKSIZE);
+#endif
 		if (j != T_BLOCKSIZE)
 		{
 			if (j != -1)
@@ -256,7 +260,11 @@ tar_append_regfile(TAR *t, char *realname)
 
 	if (i > 0)
 	{
+#ifndef _WIN32
 		j = read(filefd, &block, i);
+#else
+		j = _read(filefd, &block, i);
+#endif
 		if (j == -1)
 			return -1;
 		memset(&(block[i]), 0, T_BLOCKSIZE - i);
