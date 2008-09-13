@@ -16,8 +16,6 @@
 # include <libgen.h>
 #endif
 
-#include "ruby.h"
-
 #if defined(NEED_BASENAME) && !defined(HAVE_BASENAME)
 
 # ifdef basename
