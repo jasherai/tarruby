@@ -83,6 +83,9 @@ openbsd_dirname(path)
 			endp--;
 		} while (endp > path && *endp == '/');
 #else
+		do {
+			endp--;
+		} while (endp > path && (*endp == '/' || *endp == '\\'));
 #endif
 	}
 
