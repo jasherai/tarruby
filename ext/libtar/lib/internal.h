@@ -36,7 +36,7 @@
 
 #define chown(p, o, g)         (0) 
 #define geteuid()              (0)
-#define lstat(p, b)            tarruby_stat((p), (b))
+#define lstat(p, b)            stat((p), (b))
 #define makedev(maj, min)      (0)
 #define mkdir(d, m)            _mkdir(d)
 #define mkfifo(p, m)           (0)
