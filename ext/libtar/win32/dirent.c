@@ -5,7 +5,6 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include "dirent.h"
-#include "tarruby_stat.h"
 
 #define S_ISDIR(m) (((m) & (_S_IFMT)) == (_S_IFDIR))
 
@@ -25,7 +24,7 @@ DIR *opendir0(const char *name, int *errorp) {
     return NULL;
   }
 
-  if (tarruby_stat(name, &st) == -1) {
+  if (stat(name, &st) == -1) {
     return NULL;
   }
 
