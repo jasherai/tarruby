@@ -36,19 +36,11 @@ static long libtar_close(long fd) {
 }
 
 static ssize_t libtar_read(long fd, void *buf, size_t len) {
-#ifndef _WIN32
 	return read((int) fd, buf, len);
-#else
-	return _read((int) fd, buf, len);
-#endif
 }
 
 static ssize_t libtar_write(long fd, const void *buf, size_t len) {
-#ifndef _WIN32
 	return write((int) fd, buf, len);
-#else
-	return _write((int) fd, buf, len);
-#endif
 }
 
 static tartype_t default_type = {
