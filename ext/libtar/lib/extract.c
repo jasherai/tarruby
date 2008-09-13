@@ -52,6 +52,7 @@ tar_set_file_perms(TAR *t, char *realname)
 	gid = th_get_gid(t);
 	ut.modtime = ut.actime = th_get_mtime(t);
 
+#ifndef _WIN32
 	/* change owner/group */
 	if (geteuid() == 0)
 #ifdef HAVE_LCHOWN
@@ -92,6 +93,7 @@ tar_set_file_perms(TAR *t, char *realname)
 		if (!realname) free(filename);
 		return -1;
 	}
+#endif
 
 	if (!realname) free(filename);
 	return 0;
