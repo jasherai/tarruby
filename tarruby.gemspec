@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name              = 'tarruby'
-  spec.version           = '0.1.1'
+  spec.version           = '0.1.2'
   spec.summary           = 'Ruby bindings for libtar.'
   spec.files             = Dir.glob('ext/**/*') + %w(README.txt)
   spec.author            = 'winebarrel'

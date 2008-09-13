@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name              = 'tarruby'
-  spec.version           = '0.1.1'
+  spec.version           = '0.1.2'
   spec.platform          = 'mswin32'
   spec.summary           = 'Ruby bindings for libtar.'
   spec.require_paths     = %w(lib/i386-mswin32)
