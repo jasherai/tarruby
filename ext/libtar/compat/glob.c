@@ -38,6 +38,7 @@
 #ifdef _WIN32
 #pragma warning(disable:4101)
 #pragma warning(disable:4244)
+#include "tarruby_stat.h"
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)

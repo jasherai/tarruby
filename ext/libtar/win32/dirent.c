@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include "dirent.h"
+#include "tarruby_stat.h"
 
 #define S_ISDIR(m) (((m) & (_S_IFMT)) == (_S_IFDIR))
 
