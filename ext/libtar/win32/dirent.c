@@ -24,7 +24,7 @@ DIR *opendir0(const char *name, int *errorp) {
     return NULL;
   }
 
-  if (stat(name, &st) == -1) {
+  if (tarruby_stat(name, &st) == -1) {
     return NULL;
   }
 

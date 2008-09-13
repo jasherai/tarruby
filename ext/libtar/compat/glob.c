@@ -149,7 +149,7 @@ typedef char Char;
 #define __P(protos) protos
 #define S_ISDIR(m)  (((m) & (_S_IFMT)) == (_S_IFDIR))
 #define S_ISLNK(m)  (0)
-#define lstat(p, b) stat((p), (b))
+#define lstat(p, b) tarruby_stat((p), (b))
 #endif
 
 static int	 compare (const void *, const void *);
@@ -832,7 +832,11 @@ g_stat(fn, sb, pglob)
 	g_Ctoc(fn, buf);
 	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		return((*pglob->gl_stat)(buf, sb));
+#ifndef _WIN32
 	return(stat(buf, sb));
+#else
+	return(tarruby_stat(buf, sb));
+#endif
 }
 
 static Char *

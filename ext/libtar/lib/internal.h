@@ -36,10 +36,12 @@
 
 #define chown(p, o, g)         (0) 
 #define geteuid()              (0)
-#define lstat(p, b)            stat((p), (b))
+#define lstat(p, b)            tarruby_stat((p), (b))
 #define makedev(maj, min)      (0)
 #define mkdir(d, m)            _mkdir(d)
 #define mkfifo(p, m)           (0)
 #define mknod(p, m, d)         (0)
 #define snprintf(s, n, f, ...) do { _snprintf((s), (n), (f), __VA_ARGS__); (s)[(n) - 1] = '\0'; } while(0)
+
+int tarruby_stat(const char *path, struct stat *buf);
 #endif
