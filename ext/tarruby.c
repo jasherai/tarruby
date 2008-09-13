@@ -153,6 +153,14 @@ static tartype_t bztype = {
 };
 #endif
 
+static void strip_sep(char *path) {
+  int len = strlen(path);
+
+  if (path[len - 1] == '/' || path[len - 1] == '\\') {
+    path[len - 1] = '\0';
+  }
+}
+
 static VALUE tarruby_tar_alloc(VALUE klass) {
   struct tarruby_tar *p = ALLOC(struct tarruby_tar);
 
@@ -245,10 +253,12 @@ static VALUE tarruby_append_file(int argc, VALUE *argv, VALUE self) {
   rb_scan_args(argc, argv, "11", &realname, &savename);
   Check_Type(realname, T_STRING);
   s_realname = RSTRING_PTR(realname);
+  strip_sep(s_realname);
 
   if (!NIL_P(savename)) {
     Check_Type(savename, T_STRING);
     s_savename = RSTRING_PTR(savename);
+    strip_sep(s_savename);
   }
 
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
@@ -269,10 +279,12 @@ static VALUE tarruby_append_tree(int argc, VALUE *argv, VALUE self) {
   rb_scan_args(argc, argv, "11", &realdir, &savedir);
   Check_Type(realdir, T_STRING);
   s_realdir = RSTRING_PTR(realdir);
+  strip_sep(s_realdir);
 
   if (!NIL_P(savedir)) {
     Check_Type(savedir, T_STRING);
     s_savedir = RSTRING_PTR(savedir);
+    strip_sep(s_savedir);
   }
 
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
