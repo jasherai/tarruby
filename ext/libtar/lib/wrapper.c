@@ -21,46 +21,6 @@
 # include <string.h>
 #endif
 
-#ifdef HAVE_SIGACTION
-#include <signal.h>
-#endif
-
-#if defined(_WIN32) || defined(HAVE_SIGACTION)
-static int __tarruby_interrupted__ = 0;
-#endif
-
-#ifdef _WIN32
-static BOOL WINAPI interrupted_handler(DWORD CtrlType) {
-	if (CTRL_C_EVENT == CtrlType) {
-		__tarruby_interrupted__ = 1;
-		return FALSE;
-	} else {
-		return TRUE;
-	}
-}
-
-void tarruby_interrupted() {
-	SetConsoleCtrlHandler(interrupted_handler, TRUE);
-}
-#endif
-
-#ifdef HAVE_SIGACTION
-static void interrupted_handler(int no) {
-	__tarruby_interrupted__ = 1;
-}
-
-void tarruby_interrupted() {
-	char buff[256];
-	int ret;
-	struct sigaction sa;
-
-	memset(&sa, 0, sizeof(struct sigaction));
-	sa.sa_handler = interrupted_handler;
-	sa.sa_flags |= SA_RESTART;
-	sigaction(SIGINT, &sa, NULL);
-}
-#endif
-
 int
 tar_extract_glob(TAR *t, char *globname, char *prefix)
 {
@@ -68,19 +28,8 @@ tar_extract_glob(TAR *t, char *globname, char *prefix)
 	char buf[MAXPATHLEN];
 	int i;
 
-#if defined(_WIN32) || defined(HAVE_SIGACTION)
-	__tarruby_interrupted__ = 0;
-#endif
-
 	while ((i = th_read(t)) == 0)
 	{
-#if defined(_WIN32) || defined(HAVE_SIGACTION)
-		if (__tarruby_interrupted__) {
-			errno = EINTR;
-			__tarruby_interrupted__ = 0;
-			return -1;
-		}
-#endif
 		filename = th_get_pathname(t);
 		if (fnmatch(globname, filename, FNM_PATHNAME | FNM_PERIOD))
 		{
@@ -114,10 +63,6 @@ tar_extract_all(TAR *t, char *prefix)
 	char buf[MAXPATHLEN];
 	int i;
 
-#if defined(_WIN32) || defined(HAVE_SIGACTION)
-	__tarruby_interrupted__ = 0;
-#endif
-
 #ifdef DEBUG
 	printf("==> tar_extract_all(TAR *t, \"%s\")\n",
 	       (prefix ? prefix : "(null)"));
@@ -127,13 +72,6 @@ tar_extract_all(TAR *t, char *prefix)
 	{
 #ifdef DEBUG
 		puts("    tar_extract_all(): calling th_get_pathname()");
-#endif
-#if defined(_WIN32) || defined(HAVE_SIGACTION)
-		if (__tarruby_interrupted__) {
-			errno = EINTR;
-			__tarruby_interrupted__ = 0;
-			return -1;
-		}
 #endif
 		filename = th_get_pathname(t);
 		if (t->options & TAR_VERBOSE)
@@ -168,9 +106,6 @@ tar_append_tree(TAR *t, char *realdir, char *savedir)
 #if defined(_WIN32)
 	int errorp = 0;
 #endif
-#if defined(_WIN32) || defined(HAVE_SIGACTION)
-	__tarruby_interrupted__ = 0;
-#endif
 
 #ifdef DEBUG
 	printf("==> tar_append_tree(0x%lx, \"%s\", \"%s\")\n",
@@ -203,13 +138,6 @@ tar_append_tree(TAR *t, char *realdir, char *savedir)
 	}
 	while ((dent = readdir(dp)) != NULL)
 	{
-#if defined(_WIN32) || defined(HAVE_SIGACTION)
-		if (__tarruby_interrupted__) {
-			errno = EINTR;
-			__tarruby_interrupted__ = 0;
-			return -1;
-		}
-#endif
 		if (strcmp(dent->d_name, ".") == 0 ||
 		    strcmp(dent->d_name, "..") == 0)
 			continue;
