@@ -21,9 +21,15 @@
 # include <string.h>
 #endif
 
-#ifdef _WIN32
-static int __tarruby_interrupted__ = 0;
+#ifdef HAVE_SIGACTION
+#include <signal.h>
+#endif
 
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
+static int __tarruby_interrupted__ = 0;
+#endif
+
+#ifdef _WIN32
 static BOOL WINAPI interrupted_handler(DWORD CtrlType) {
 	if (CTRL_C_EVENT == CtrlType) {
 		__tarruby_interrupted__ = 1;
@@ -38,6 +44,23 @@ void tarruby_interrupted() {
 }
 #endif
 
+#ifdef HAVE_SIGACTION
+static void interrupted_handler(int no) {
+	__tarruby_interrupted__ = 1;
+}
+
+void tarruby_interrupted() {
+	char buff[256];
+	int ret;
+	struct sigaction sa;
+
+	memset(&sa, 0, sizeof(struct sigaction));
+	sa.sa_handler = interrupted_handler;
+	sa.sa_flags |= SA_RESTART;
+	sigaction(SIGINT, &sa, NULL);
+}
+#endif
+
 int
 tar_extract_glob(TAR *t, char *globname, char *prefix)
 {
@@ -45,13 +68,13 @@ tar_extract_glob(TAR *t, char *globname, char *prefix)
 	char buf[MAXPATHLEN];
 	int i;
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
 	__tarruby_interrupted__ = 0;
 #endif
 
 	while ((i = th_read(t)) == 0)
 	{
-#ifdef _WIN32
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
 		if (__tarruby_interrupted__) {
 			errno = EINTR;
 			__tarruby_interrupted__ = 0;
@@ -91,7 +114,7 @@ tar_extract_all(TAR *t, char *prefix)
 	char buf[MAXPATHLEN];
 	int i;
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
 	__tarruby_interrupted__ = 0;
 #endif
 
@@ -105,7 +128,7 @@ tar_extract_all(TAR *t, char *prefix)
 #ifdef DEBUG
 		puts("    tar_extract_all(): calling th_get_pathname()");
 #endif
-#ifdef _WIN32
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
 		if (__tarruby_interrupted__) {
 			errno = EINTR;
 			__tarruby_interrupted__ = 0;
@@ -142,8 +165,10 @@ tar_append_tree(TAR *t, char *realdir, char *savedir)
 	struct dirent *dent;
 	DIR *dp;
 	struct stat s;
-#ifdef _WIN32
-    int errorp = 0;
+#if defined(_WIN32)
+	int errorp = 0;
+#endif
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
 	__tarruby_interrupted__ = 0;
 #endif
 
@@ -178,7 +203,7 @@ tar_append_tree(TAR *t, char *realdir, char *savedir)
 	}
 	while ((dent = readdir(dp)) != NULL)
 	{
-#ifdef _WIN32
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
 		if (__tarruby_interrupted__) {
 			errno = EINTR;
 			__tarruby_interrupted__ = 0;

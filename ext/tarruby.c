@@ -666,7 +666,7 @@ void DLLEXPORT Init_tarruby() {
   rb_define_method(Tar, "fifo?", tarruby_is_fifo, 0);
   rb_define_method(Tar, "longname?", tarruby_is_longname, 0);
   rb_define_method(Tar, "longlink?", tarruby_is_longlink, 0);
-#ifdef _WIN32
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
   tarruby_interrupted();
 #endif
 }

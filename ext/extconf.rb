@@ -4,7 +4,15 @@ def make_libtar
   Dir.chdir('libtar')
 
   begin
-    system('sh configure') and system('make')
+    return false unless system('sh configure')
+
+    if have_func('sigaction')
+      open('config.h', 'a') do |fout|
+        fout << "\n#define HAVE_SIGACTION 1\n"
+      end
+    end
+
+    system('make')
   ensure
     Dir.chdir('..')
   end
