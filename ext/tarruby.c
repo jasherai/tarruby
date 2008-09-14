@@ -8,10 +8,7 @@
 #endif
 #include "libtar.h"
 #include "ruby.h"
-
-#ifdef _WIN32
-void tarruby_interrupted();
-#endif
+#include "rubysig.h"
 
 #ifndef RSTRING_PTR
 #define RSTRING_PTR(s) (RSTRING(s)->ptr)
@@ -279,6 +276,7 @@ static VALUE tarruby_append_tree(int argc, VALUE *argv, VALUE self) {
   VALUE realdir, savedir;
   struct tarruby_tar *p_tar;
   char *s_realdir, *s_savedir = NULL;
+  int result = -1;
 
   rb_scan_args(argc, argv, "11", &realdir, &savedir);
   Check_Type(realdir, T_STRING);
@@ -293,7 +291,11 @@ static VALUE tarruby_append_tree(int argc, VALUE *argv, VALUE self) {
 
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
-  if (tar_append_tree(p_tar->tar, s_realdir, s_savedir) != 0) {
+  TRAP_BEG;
+  result = tar_append_tree(p_tar->tar, s_realdir, s_savedir);
+  TRAP_END;
+
+  if (result != 0) {
     rb_raise(Error, "Append tree failed: %s", strerror(errno));
   }
 
@@ -347,6 +349,7 @@ static VALUE tarruby_extract_glob(int argc, VALUE *argv, VALUE self) {
   VALUE globname, prefix;
   struct tarruby_tar *p_tar;
   char *s_globname, *s_prefix = NULL;
+  int result = -1;
 
   rb_scan_args(argc, argv, "11", &globname, &prefix);
   Check_Type(globname, T_STRING);
@@ -359,7 +362,11 @@ static VALUE tarruby_extract_glob(int argc, VALUE *argv, VALUE self) {
 
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
-  if (tar_extract_glob(p_tar->tar, s_globname, s_prefix) != 0) {
+  TRAP_BEG;
+  result = tar_extract_glob(p_tar->tar, s_globname, s_prefix);
+  TRAP_END;
+
+  if (result != 0) {
     rb_raise(Error, "Extract archive failed: %s", strerror(errno));
   }
 
@@ -373,6 +380,7 @@ static VALUE tarruby_extract_all(int argc, VALUE *argv, VALUE self) {
   VALUE prefix;
   struct tarruby_tar *p_tar;
   char *s_prefix = NULL;
+  int result = -1;
 
   rb_scan_args(argc, argv, "01", &prefix);
 
@@ -383,7 +391,11 @@ static VALUE tarruby_extract_all(int argc, VALUE *argv, VALUE self) {
 
   Data_Get_Struct(self, struct tarruby_tar, p_tar);
 
-  if (tar_extract_all(p_tar->tar, s_prefix) != 0) {
+  TRAP_BEG;
+  result = tar_extract_all(p_tar->tar, s_prefix);
+  TRAP_END;
+
+  if (result != 0) {
     rb_raise(Error, "Extract archive failed: %s", strerror(errno));
   }
 
@@ -666,7 +678,4 @@ void DLLEXPORT Init_tarruby() {
   rb_define_method(Tar, "fifo?", tarruby_is_fifo, 0);
   rb_define_method(Tar, "longname?", tarruby_is_longname, 0);
   rb_define_method(Tar, "longlink?", tarruby_is_longlink, 0);
-#if defined(_WIN32) || defined(HAVE_SIGACTION)
-  tarruby_interrupted();
-#endif
 }
