@@ -31,7 +31,7 @@ static long libtar_open(const char *pathname, int oflags, int mode) {
 	return open(pathname, oflags, mode);
 }
 
-static long libtar_close(long fd) {
+static int libtar_close(long fd) {
 	return close((int) fd);
 }
 
