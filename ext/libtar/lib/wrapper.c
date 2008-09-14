@@ -21,6 +21,22 @@
 # include <string.h>
 #endif
 
+#ifdef _WIN32
+static int __tarruby_is_interrupted__ = 0;
+
+static BOOL WINAPI interrupted_handler(DWORD CtrlType) {
+	if (CTRL_C_EVENT == CtrlType) {
+		__tarruby_is_interrupted__ = 1;
+		return FALSE;
+	} else {
+		return TRUE;
+	}
+}
+
+void tarruby_interrupted() {
+	SetConsoleCtrlHandler(interrupted_handler, TRUE);
+}
+#endif
 
 int
 tar_extract_glob(TAR *t, char *globname, char *prefix)
@@ -31,6 +47,13 @@ tar_extract_glob(TAR *t, char *globname, char *prefix)
 
 	while ((i = th_read(t)) == 0)
 	{
+#ifdef _WIN32
+		if (__tarruby_is_interrupted__) {
+			errno = EINTR;
+			__tarruby_is_interrupted__ = 0;
+			return -1;
+		}
+#endif
 		filename = th_get_pathname(t);
 		if (fnmatch(globname, filename, FNM_PATHNAME | FNM_PERIOD))
 		{
@@ -75,6 +98,13 @@ tar_extract_all(TAR *t, char *prefix)
 	{
 #ifdef DEBUG
 		puts("    tar_extract_all(): calling th_get_pathname()");
+#endif
+#ifdef _WIN32
+		if (__tarruby_is_interrupted__) {
+			errno = EINTR;
+			__tarruby_is_interrupted__ = 0;
+			return -1;
+		}
 #endif
 		filename = th_get_pathname(t);
 		if (t->options & TAR_VERBOSE)
@@ -141,6 +171,13 @@ tar_append_tree(TAR *t, char *realdir, char *savedir)
 	}
 	while ((dent = readdir(dp)) != NULL)
 	{
+#ifdef _WIN32
+		if (__tarruby_is_interrupted__) {
+			errno = EINTR;
+			__tarruby_is_interrupted__ = 0;
+			return -1;
+		}
+#endif
 		if (strcmp(dent->d_name, ".") == 0 ||
 		    strcmp(dent->d_name, "..") == 0)
 			continue;
