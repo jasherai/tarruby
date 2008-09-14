@@ -50,7 +50,7 @@ openbsd_basename(path)
 
 	/* Strip trailing slashes */
 	endp = path + strlen(path) - 1;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	while (endp > path && *endp == '/')
 		endp--;
 #else
@@ -60,7 +60,7 @@ openbsd_basename(path)
 #endif
 
 	/* All slashes becomes "/" */
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (endp == path && *endp == '/') {
 		(void)strcpy(bname, "/");
 		return(bname);
@@ -73,7 +73,7 @@ openbsd_basename(path)
 #endif
 	/* Find the start of the base */
 	startp = endp;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	while (startp > path && *(startp - 1) != '/')
 		startp--;
 #else

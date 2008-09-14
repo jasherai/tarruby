@@ -47,7 +47,7 @@ uid_t
 th_get_uid(TAR *t)
 {
 	int uid;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	struct passwd *pw;
 
 	pw = getpwnam(t->th_buf.uname);
@@ -65,7 +65,7 @@ gid_t
 th_get_gid(TAR *t)
 {
 	int gid;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	struct group *gr;
 
 	gr = getgrnam(t->th_buf.gname);
@@ -89,7 +89,7 @@ th_get_mode(TAR *t)
 	{
 		switch (t->th_buf.typeflag)
 		{
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 		case SYMTYPE:
 			mode |= S_IFLNK;
 			break;
@@ -97,7 +97,7 @@ th_get_mode(TAR *t)
 		case CHRTYPE:
 			mode |= S_IFCHR;
 			break;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 		case BLKTYPE:
 			mode |= S_IFBLK;
 			break;
@@ -105,7 +105,7 @@ th_get_mode(TAR *t)
 		case DIRTYPE:
 			mode |= S_IFDIR;
 			break;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 		case FIFOTYPE:
 			mode |= S_IFIFO;
 			break;

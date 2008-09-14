@@ -10,7 +10,6 @@
 **  University of Illinois at Urbana-Champaign
 */
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 #ifdef _WIN32
 #pragma warning(disable:4101)
 #endif
@@ -117,7 +116,7 @@ tar_append_file(TAR *t, char *realname, char *savename)
 		if (libtar_hash_add(t->h, td) == -1)
 			return -1;
 	}
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	libtar_hashptr_reset(&hp);
 	if (libtar_hash_getkey(td->td_h, &hp, &(s.st_ino),
 			       (libtar_matchfunc_t)ino_match) != 0)
@@ -147,7 +146,7 @@ tar_append_file(TAR *t, char *realname, char *savename)
 	}
 #endif /* #ifndef _WIN32 */
 
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	/* check if it's a symlink */
 	if (TH_ISSYM(t))
 	{
@@ -224,8 +223,6 @@ tar_append_regfile(TAR *t, char *realname)
 	int i, j;
 	size_t size;
 
-	// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
-	//filefd = open(realname, O_RDONLY);
 	filefd = open(realname, O_RDONLY
 #ifdef O_BINARY
 			| O_BINARY

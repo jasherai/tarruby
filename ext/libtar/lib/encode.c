@@ -10,7 +10,6 @@
 **  University of Illinois at Urbana-Champaign
 */
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 #ifdef _WIN32
 #pragma warning(disable:4244)
 #endif
@@ -42,15 +41,11 @@ th_finish(TAR *t)
 		strncpy(t->th_buf.magic, TMAGIC, TMAGLEN);
 	}
 
-	// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 	for (i = 0; i < T_BLOCKSIZE; i++) {
-		//sum += ((char *)(&(t->th_buf)))[i];
 		sum += ((unsigned char *)(&(t->th_buf)))[i];
 	}
 	for (i = 0; i < 8; i++)
 		sum += (' ' - t->th_buf.chksum[i]);
-	// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
-	//int_to_oct(sum, t->th_buf.chksum, 8);
 	snprintf(t->th_buf.chksum, 8, "%06lo", (unsigned long)(sum));
 	t->th_buf.chksum[6] = 0;
 	t->th_buf.chksum[7] = ' ';
@@ -69,7 +64,7 @@ th_set_type(TAR *t, mode_t mode)
 		t->th_buf.typeflag = DIRTYPE;
 	if (S_ISCHR(mode))
 		t->th_buf.typeflag = CHRTYPE;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (S_ISBLK(mode))
 		t->th_buf.typeflag = BLKTYPE;
 #endif
@@ -130,7 +125,7 @@ th_set_path(TAR *t, char *pathname)
 void
 th_set_link(TAR *t, char *linkname)
 {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 #ifdef DEBUG
 	printf("==> th_set_link(th, linkname=\"%s\")\n", linkname);
 #endif
@@ -158,7 +153,7 @@ th_set_link(TAR *t, char *linkname)
 void
 th_set_device(TAR *t, dev_t device)
 {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 #ifdef DEBUG
 	printf("th_set_device(): major = %d, minor = %d\n",
 	       major(device), minor(device));
@@ -173,7 +168,7 @@ th_set_device(TAR *t, dev_t device)
 void
 th_set_user(TAR *t, uid_t uid)
 {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	struct passwd *pw;
 
 	pw = getpwuid(uid);
@@ -189,7 +184,7 @@ th_set_user(TAR *t, uid_t uid)
 void
 th_set_group(TAR *t, gid_t gid)
 {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	struct group *gr;
 
 	gr = getgrgid(gid);
@@ -205,15 +200,13 @@ th_set_group(TAR *t, gid_t gid)
 void
 th_set_mode(TAR *t, mode_t fmode)
 {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (S_ISSOCK(fmode))
 	{
 		fmode &= ~S_IFSOCK;
 		fmode |= S_IFIFO;
 	}
 #endif
-	// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
-	//int_to_oct(fmode, (t)->th_buf.mode, 8);
 	int_to_oct((fmode & 0xFFF), (t)->th_buf.mode, 8);
 }
 

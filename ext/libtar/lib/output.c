@@ -64,7 +64,7 @@ th_print_long_ls(TAR *t)
 {
 	char *filename;
 	char modestring[12];
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	struct passwd *pw;
 	struct group *gr;
 #endif
@@ -85,7 +85,7 @@ th_print_long_ls(TAR *t)
 #endif
 
 	uid = th_get_uid(t);
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	pw = getpwuid(uid);
 	if (pw == NULL)
 		snprintf(username, sizeof(username), "%d", uid);
@@ -96,7 +96,7 @@ th_print_long_ls(TAR *t)
 #endif
 
 	gid = th_get_gid(t);
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	gr = getgrgid(gid);
 	if (gr == NULL)
 		snprintf(groupname, sizeof(groupname), "%d", gid);

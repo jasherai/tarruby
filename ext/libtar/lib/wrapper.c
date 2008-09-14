@@ -22,11 +22,11 @@
 #endif
 
 #ifdef _WIN32
-static int __tarruby_is_interrupted__ = 0;
+static int __tarruby_interrupted__ = 0;
 
 static BOOL WINAPI interrupted_handler(DWORD CtrlType) {
 	if (CTRL_C_EVENT == CtrlType) {
-		__tarruby_is_interrupted__ = 1;
+		__tarruby_interrupted__ = 1;
 		return FALSE;
 	} else {
 		return TRUE;
@@ -45,12 +45,16 @@ tar_extract_glob(TAR *t, char *globname, char *prefix)
 	char buf[MAXPATHLEN];
 	int i;
 
+#ifdef _WIN32
+	__tarruby_interrupted__ = 0;
+#endif
+
 	while ((i = th_read(t)) == 0)
 	{
 #ifdef _WIN32
-		if (__tarruby_is_interrupted__) {
+		if (__tarruby_interrupted__) {
 			errno = EINTR;
-			__tarruby_is_interrupted__ = 0;
+			__tarruby_interrupted__ = 0;
 			return -1;
 		}
 #endif
@@ -69,8 +73,6 @@ tar_extract_glob(TAR *t, char *globname, char *prefix)
 			snprintf(buf, sizeof(buf), "%s/%s", prefix, filename);
 		else
 			strlcpy(buf, filename, sizeof(buf));
-		// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
-		//if (tar_extract_file(t, filename) != 0)
 		if (tar_extract_file(t, buf) != 0) {
 			free(filename);
 			return -1;
@@ -89,6 +91,10 @@ tar_extract_all(TAR *t, char *prefix)
 	char buf[MAXPATHLEN];
 	int i;
 
+#ifdef _WIN32
+	__tarruby_interrupted__ = 0;
+#endif
+
 #ifdef DEBUG
 	printf("==> tar_extract_all(TAR *t, \"%s\")\n",
 	       (prefix ? prefix : "(null)"));
@@ -100,9 +106,9 @@ tar_extract_all(TAR *t, char *prefix)
 		puts("    tar_extract_all(): calling th_get_pathname()");
 #endif
 #ifdef _WIN32
-		if (__tarruby_is_interrupted__) {
+		if (__tarruby_interrupted__) {
 			errno = EINTR;
-			__tarruby_is_interrupted__ = 0;
+			__tarruby_interrupted__ = 0;
 			return -1;
 		}
 #endif
@@ -136,8 +142,9 @@ tar_append_tree(TAR *t, char *realdir, char *savedir)
 	struct dirent *dent;
 	DIR *dp;
 	struct stat s;
-#ifdef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifdef _WIN32
     int errorp = 0;
+	__tarruby_interrupted__ = 0;
 #endif
 
 #ifdef DEBUG
@@ -152,14 +159,14 @@ tar_append_tree(TAR *t, char *realdir, char *savedir)
 	puts("    tar_append_tree(): done with tar_append_file()...");
 #endif
 
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	dp = opendir(realdir);
 #else
 	dp = opendir0(realdir, &errorp);
 #endif
 	if (dp == NULL)
 	{
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 		if (errno == ENOTDIR)
 			return 0;
 #else
@@ -172,9 +179,9 @@ tar_append_tree(TAR *t, char *realdir, char *savedir)
 	while ((dent = readdir(dp)) != NULL)
 	{
 #ifdef _WIN32
-		if (__tarruby_is_interrupted__) {
+		if (__tarruby_interrupted__) {
 			errno = EINTR;
-			__tarruby_is_interrupted__ = 0;
+			__tarruby_interrupted__ = 0;
 			return -1;
 		}
 #endif

@@ -125,17 +125,17 @@ tar_extract_file(TAR *t, char *realname)
 		if (i == 1)
 			i = 0;
 	}
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	else if (TH_ISLNK(t))
 		i = tar_extract_hardlink(t, realname);
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	else if (TH_ISSYM(t))
 		i = tar_extract_symlink(t, realname);
 #endif
 	else if (TH_ISCHR(t))
 		i = tar_extract_chardev(t, realname);
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	else if (TH_ISBLK(t))
 		i = tar_extract_blockdev(t, realname);
 #endif
@@ -281,7 +281,6 @@ tar_extract_regfile(TAR *t, char *realname)
 	return 0;
 }
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 int tar_extract_function(TAR *t, void *data, int (*f)(char *b, int l, void *d)) {
   size_t size;
   int i, k;
@@ -343,7 +342,7 @@ tar_skip_regfile(TAR *t)
 int
 tar_extract_hardlink(TAR * t, char *realname)
 {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	char *filename;
 	char *linktgt = NULL;
 	linkname_t *lnp;
@@ -399,7 +398,7 @@ tar_extract_hardlink(TAR * t, char *realname)
 int
 tar_extract_symlink(TAR *t, char *realname)
 {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	char *filename;
 	char buf[T_BLOCKSIZE];
 
@@ -498,7 +497,7 @@ tar_extract_chardev(TAR *t, char *realname)
 int
 tar_extract_blockdev(TAR *t, char *realname)
 {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	mode_t mode;
 	unsigned long devmaj, devmin;
 	char *filename;

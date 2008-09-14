@@ -19,7 +19,6 @@
 
 #include <libtar_listhash.h>
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 #ifdef _WIN32
 #include "win32/types.h"
 #define S_ISDIR(m)  (((m) & (_S_IFMT)) == (_S_IFDIR))
@@ -230,7 +229,6 @@ void th_finish(TAR *t);
 /* sequentially extract next file from t */
 int tar_extract_file(TAR *t, char *realname);
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 int tar_extract_function(TAR *t, void *data, int (*f)(char *b, int l, void *d));
 
 /* extract different file types */
@@ -283,9 +281,6 @@ int th_crc_calc(TAR *t);
 int oct_to_int(char *oct);
 
 /* integer to NULL-terminated string-octal conversion */
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
-//#define int_to_oct(num, oct, octlen) \
-//	snprintf((oct), (octlen), "%*lo ", (octlen) - 2, (unsigned long)(num))
 #define int_to_oct(num, oct, octlen) \
 	snprintf((oct), (octlen), "%0*lo", (octlen) - 1, (unsigned long)(num))
 

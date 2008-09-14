@@ -39,7 +39,6 @@ static char *rcsid = "$OpenBSD: strmode.c,v 1.3 1997/06/13 13:57:20 deraadt Exp 
 #include <sys/stat.h>
 #include <string.h>
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 #ifdef _WIN32
 #include "win32/types.h"
 #endif
@@ -57,7 +56,7 @@ strmode(mode, p)
 	case S_IFCHR:			/* character special */
 		*p++ = 'c';
 		break;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	case S_IFBLK:			/* block special */
 		*p++ = 'b';
 		break;
@@ -65,12 +64,12 @@ strmode(mode, p)
 	case S_IFREG:			/* regular */
 		*p++ = '-';
 		break;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	case S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
 		break;
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	case S_IFSOCK:			/* socket */
 		*p++ = 's';
 		break;
@@ -90,7 +89,7 @@ strmode(mode, p)
 		break;
 	}
 	/* usr */
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (mode & S_IRUSR)
 		*p++ = 'r';
 	else
@@ -98,7 +97,7 @@ strmode(mode, p)
 #else
 	*p++ = '-';
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (mode & S_IWUSR)
 		*p++ = 'w';
 	else
@@ -106,7 +105,7 @@ strmode(mode, p)
 #else
 	*p++ = '-';
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	switch (mode & (S_IXUSR | S_ISUID)) {
 	case 0:
 		*p++ = '-';
@@ -125,7 +124,7 @@ strmode(mode, p)
 	*p++ = '-';
 #endif
 	/* group */
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (mode & S_IRGRP)
 		*p++ = 'r';
 	else
@@ -133,7 +132,7 @@ strmode(mode, p)
 #else
 	*p++ = '-';
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (mode & S_IWGRP)
 		*p++ = 'w';
 	else
@@ -141,7 +140,7 @@ strmode(mode, p)
 #else
 	*p++ = '-';
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	switch (mode & (S_IXGRP | S_ISGID)) {
 	case 0:
 		*p++ = '-';
@@ -160,7 +159,7 @@ strmode(mode, p)
 	*p++ = '-';
 #endif
 	/* other */
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (mode & S_IROTH)
 		*p++ = 'r';
 	else
@@ -168,7 +167,7 @@ strmode(mode, p)
 #else
 	*p++ = '-';
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	if (mode & S_IWOTH)
 		*p++ = 'w';
 	else
@@ -176,7 +175,7 @@ strmode(mode, p)
 #else
 	*p++ = '-';
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	switch (mode & (S_IXOTH | S_ISVTX)) {
 	case 0:
 		*p++ = '-';

@@ -34,7 +34,6 @@
  * SUCH DAMAGE.
  */
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 #ifdef _WIN32
 #pragma warning(disable:4101)
 #pragma warning(disable:4244)
@@ -144,7 +143,6 @@ typedef char Char;
 #define	M_SET		META('[')
 #define	ismeta(c)	(((c)&M_QUOTE) != 0)
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 #ifdef _WIN32
 #define __P(protos) protos
 #define S_ISDIR(m)  (((m) & (_S_IFMT)) == (_S_IFDIR))
@@ -386,7 +384,7 @@ globtilde(pattern, patbuf, patbuf_len, pglob)
 #ifdef HAVE_ISSETUGID
 		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
 #endif
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 			if ((pwd = getpwuid(getuid())) == NULL)
 				return pattern;
 			else
@@ -404,7 +402,7 @@ globtilde(pattern, patbuf, patbuf_len, pglob)
 		/*
 		 * Expand a ~user
 		 */
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 		if ((pwd = getpwnam((char*) patbuf)) == NULL)
 			return pattern;
 		else
