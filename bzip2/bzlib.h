@@ -75,7 +75,6 @@ typedef
 #include <stdio.h>
 #endif
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 //#ifdef _WIN32
 //#   include <windows.h>
 //#   ifdef small
