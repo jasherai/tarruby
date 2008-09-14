@@ -150,9 +150,6 @@ oct_to_int(char *oct)
 void
 int_to_oct_nonull(int num, char *oct, size_t octlen)
 {
-	// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
-	//snprintf(oct, octlen, "%*lo", octlen - 1, (unsigned long)num);
-	//oct[octlen - 1] = ' ';
 	snprintf(oct, octlen, "%0*lo", octlen - 1, (unsigned long)num);
 	oct[octlen - 1] = 0;
 }

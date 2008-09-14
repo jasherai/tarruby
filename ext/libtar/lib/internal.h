@@ -15,7 +15,6 @@
 
 #include <libtar.h>
 
-// modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
 #ifdef _WIN32
 
 #include <direct.h>

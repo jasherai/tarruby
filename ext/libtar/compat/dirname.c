@@ -50,7 +50,7 @@ openbsd_dirname(path)
 
 	/* Strip trailing slashes */
 	endp = path + strlen(path) - 1;
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	while (endp > path && *endp == '/')
 		endp--;
 #else
@@ -60,7 +60,7 @@ openbsd_dirname(path)
 #endif
 
 	/* Find the start of the dir */
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 	while (endp > path && *endp != '/')
 		endp--;
 #else
@@ -71,14 +71,14 @@ openbsd_dirname(path)
 
 	/* Either the dir is "/" or there are no slashes */
 	if (endp == path) {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 		(void)strcpy(bname, *endp == '/' ? "/" : ".");
 #else
 		(void)strcpy(bname, (*endp == '/' || *endp == '\\') ? "/" : ".");
 #endif
 		return(bname);
 	} else {
-#ifndef _WIN32 // modified by SUGAWARA Genki <sgwr_dts@yahoo.co.jp>
+#ifndef _WIN32
 		do {
 			endp--;
 		} while (endp > path && *endp == '/');

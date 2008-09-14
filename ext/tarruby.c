@@ -9,6 +9,10 @@
 #include "libtar.h"
 #include "ruby.h"
 
+#ifdef _WIN32
+void tarruby_interrupted();
+#endif
+
 #ifndef RSTRING_PTR
 #define RSTRING_PTR(s) (RSTRING(s)->ptr)
 #endif
@@ -32,7 +36,7 @@
 
 #define INT2TIME(i) rb_funcall(rb_cTime, rb_intern("at"), 1, INT2NUM(i))
 
-#define VERSION "0.1.2"
+#define VERSION "0.1.3"
 
 static VALUE Tar;
 static VALUE Error;
@@ -662,4 +666,7 @@ void DLLEXPORT Init_tarruby() {
   rb_define_method(Tar, "fifo?", tarruby_is_fifo, 0);
   rb_define_method(Tar, "longname?", tarruby_is_longname, 0);
   rb_define_method(Tar, "longlink?", tarruby_is_longlink, 0);
+#if defined(_WIN32) || defined(HAVE_SIGACTION)
+  tarruby_interrupted();
+#endif
 }

@@ -21,7 +21,7 @@ gem install tarruby
 
     require 'tarruby'
     
-    Tar.open('foo.tar', File::RDONLY, 0644, Tar::GNU | Tar::VERBOSE) do |tar|
+    Tar.open('foo.tar', File::RDONLY, Tar::GNU) do |tar|
       while tar.read # or 'tar.each do ...'
         puts tar.pathname
         tar.print_long_ls
@@ -48,7 +48,7 @@ gem install tarruby
 
     require 'tarruby'
     
-    Tar.open('bar.tar', File::CREAT | File::WRONLY, 0644, Tar::GNU | Tar::VERBOSE) do |tar|
+    Tar.open('bar.tar', File::CREAT | File::WRONLY, Tar::GNU) do |tar|
       Dir.glob('**/*.c').each do |filename|
         tar.append_file(filename)
       end
