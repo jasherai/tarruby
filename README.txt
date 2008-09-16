@@ -48,10 +48,15 @@ gem install tarruby
 
     require 'tarruby'
     
+    buf = 'ABCDEFG'
+    
     Tar.open('bar.tar', File::CREAT | File::WRONLY, 0644, Tar::GNU | Tar::VERBOSE) do |tar|
       Dir.glob('**/*.c').each do |filename|
         tar.append_file(filename)
       end
+      
+      # append from buffer
+      tar.append_buffer('zoo.txt, buf)
       
       ##if append directory
       #tar.append_tree('dirname')
