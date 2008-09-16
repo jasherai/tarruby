@@ -21,6 +21,7 @@
 #include <fcntl.h>
 #include <sys/param.h>
 #include <sys/types.h>
+#include <time.h>
 
 #ifdef STDC_HEADERS
 # include <stdlib.h>
@@ -310,7 +311,7 @@ tar_append_function(TAR *t, char *savename, int size, void *data, int (*f)(char 
 	th_set_user(t, 0);
 	th_set_group(t, 0);
 	th_set_mode(t, 0644);
-	th_set_mtime(t, 0);
+	th_set_mtime(t, (int) time(NULL));
 	th_set_size(t, size);
 
 	/* set the header path */
