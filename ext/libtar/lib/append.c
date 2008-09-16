@@ -266,4 +266,69 @@ tar_append_regfile(TAR *t, char *realname)
 	return 0;
 }
 
+static int
+tar_append_function0(TAR *t, void *data, int (*f)(char *b, int l, void *d))
+{
+	char block[T_BLOCKSIZE];
+	int filefd;
+	int i, j;
+	size_t size;
 
+	size = th_get_size(t);
+	for (i = size; i > T_BLOCKSIZE; i -= T_BLOCKSIZE)
+	{
+		j = f(block, T_BLOCKSIZE, data);
+		if (j != T_BLOCKSIZE)
+		{
+			if (j != -1)
+				errno = EINVAL;
+			return -1;
+		}
+		if (tar_block_write(t, &block) == -1)
+			return -1;
+	}
+
+	if (i > 0)
+	{
+		j = f(block, i, data);
+		if (j == -1)
+			return -1;
+		memset(&(block[i]), 0, T_BLOCKSIZE - i);
+		if (tar_block_write(t, &block) == -1)
+			return -1;
+	}
+
+	return 0;
+}
+
+int
+tar_append_function(TAR *t, char *savename, int size, void *data, int (*f)(char *b, int l, void *d))
+{
+	/* set header block */
+	memset(&(t->th_buf), 0, sizeof(struct tar_header));
+	t->th_buf.typeflag = REGTYPE;
+	th_set_user(t, 0);
+	th_set_group(t, 0);
+	th_set_mode(t, 0644);
+	th_set_mtime(t, 0);
+	th_set_size(t, size);
+
+	/* set the header path */
+	th_set_path(t, savename);
+
+	/* print file info */
+	if (t->options & TAR_VERBOSE)
+		th_print_long_ls(t);
+
+	/* write header */
+	if (th_write(t) != 0)
+	{
+		return -1;
+	}
+
+	/* if it's a regular file, write the contents as well */
+	if (tar_append_function0(t, data, f) != 0)
+		return -1;
+
+	return 0;
+}

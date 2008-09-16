@@ -149,6 +149,7 @@ int tar_append_eof(TAR *t);
 /* add file contents to a tarchive */
 int tar_append_regfile(TAR *t, char *realname);
 
+int tar_append_function(TAR *t, char *savename, int size, void *data, int (*f)(char *b, int l, void *d));
 
 /***** block.c *************************************************************/
 

@@ -271,6 +271,35 @@ static VALUE tarruby_append_file(int argc, VALUE *argv, VALUE self) {
   return Qnil;
 }
 
+static int tarruby_append_buffer0(char *buf, int len, void *data) {
+  char **p_buffer = (char **) data;
+  memcpy(buf, *p_buffer, len);
+  p_buffer += len;
+  return len;
+}
+
+/* */
+static VALUE tarruby_append_buffer(VALUE self, VALUE savename, VALUE buffer) {
+  struct tarruby_tar *p_tar;
+  char *s_savename, *s_buffer;
+  int i_size;
+
+  Check_Type(savename, T_STRING);
+  Check_Type(buffer, T_STRING);
+  s_savename = RSTRING_PTR(savename);
+  strip_sep(s_savename);
+  s_buffer = RSTRING_PTR(buffer);
+  i_size = RSTRING_LEN(buffer);
+
+  Data_Get_Struct(self, struct tarruby_tar, p_tar);
+
+  if (tar_append_function(p_tar->tar, s_savename, i_size, (void *) &s_buffer, tarruby_append_buffer0) != 0) {
+    rb_raise(Error, "Append buffer failed: %s", strerror(errno));
+  }
+
+  return Qnil;
+}
+
 /* */
 static VALUE tarruby_append_tree(int argc, VALUE *argv, VALUE self) {
   VALUE realdir, savedir;
@@ -323,7 +352,7 @@ static VALUE tarruby_extract_file(VALUE self, VALUE realname) {
 static int tarruby_extract_buffer0(char *buf, int len, void *data) {
   VALUE buffer = (VALUE) data;
   rb_str_buf_cat(buffer, buf, len);
-  return 0;
+  return len;
 }
 
 /* */
@@ -650,6 +679,7 @@ void DLLEXPORT Init_tarruby() {
 #endif
   rb_define_method(Tar, "close", tarruby_close, 0);
   rb_define_method(Tar, "append_file", tarruby_append_file, -1);
+  rb_define_method(Tar, "append_buffer", tarruby_append_buffer, 2);
   rb_define_method(Tar, "append_tree", tarruby_append_tree, -1);
   rb_define_method(Tar, "extract_file", tarruby_extract_file, 1);
   rb_define_method(Tar, "extract_buffer", tarruby_extract_buffer, 0);
